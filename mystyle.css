@@ -1,0 +1,12 @@
+.tooltipss {
+            position: absolute;
+            width: 120px;
+            height: auto;
+            font-family: sans-serif;
+    font-size: 14px;
+    text-align: center;
+    border-style:solid;
+    border-width: 1px;
+    background-color: #a8a5a9;
+    border-radius: 5px;
+        }
