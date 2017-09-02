@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-hsv.v0.1.min.js"></script>
+    <script src="https://d3js.org/d3-contour.v1.min.js"></script>
+
+</head>
+<body>
+
+<script>
+    var dataset = [34,102,78,99,167,124];
+
+    var width = 400;
+    var height = 400;
+
+    var svg = d3.select('body')
+        .append('svg')
+        .attr('width',width)
+        .attr('height',height);
+
+    var padding = {top:20,right:20,
+    bottom:20,left:20};
+
+    var rectstep =35;
+
+    var rectwidth =30;
+
+    var textwidth = 50;//横向柱状图，放置文字描述
+
+    //添加横向柱状图
+    var rect = svg.selectAll('rect')
+        .data(dataset)
+        .enter()
+        .append('rect')
+        .attr('fill','red')
+        .attr('y',function (d,i) {
+            return padding.top+i*rectstep;
+        })
+        .attr('x', function (d,i) {
+            return padding.left+textwidth;
+        })
+
+        .attr('height',rectwidth)
+        .attr('width',function (d) {
+            return d;
+        });
+
+    //添加文字说明
+    var text = svg.selectAll('text')
+        .data(dataset)
+        .enter()
+        .append('text')
+        .attr('fill','black')
+        .attr('text-anchor','right')
+        .attr('font-size','14px')
+        .attr('y',function (d,i) {
+            return padding.top+i*rectstep;
+        })
+        .attr('x', function (d,i) {
+            return padding.left+textwidth;
+        })
+        .text(function (d,i) {
+            return '第'+(i+1)+'个数'
+        })
+        .attr('dy','1.5em')
+        .attr('dx',-textwidth);
+
+    function draw () {
+        var updaterect = svg.selectAll('rect')
+            .data(dataset);
+
+        var enterrect =updaterect.enter();
+
+        var exitrect = updaterect.exit();
+
+        updaterect
+        .attr('fill','red')
+        .attr('y',function (d,i) {
+            return padding.top+i*rectstep;
+        })
+        .attr('x', function (d,i) {
+            return padding.left+textwidth;
+        })
+
+        .attr('height',rectwidth)
+        .attr('width',function (d) {
+            return d;
+        });
+
+        enterrect.append('rect')
+        .attr('fill','red')
+        .attr('y',function (d,i) {
+            return padding.top+i*rectstep;
+        })
+        .attr('x', function (d,i) {
+            return padding.left+textwidth;
+        })
+
+        .attr('height',rectwidth)
+        .attr('width',function (d) {
+            return d;
+        });
+
+        exitrect.remove()
+    }
+    
+    function mysort() {
+        dataset.sort(d3.ascending);
+        draw();
+    }
+
+    function myadd() {
+        dataset.push(Math.floor(Math.random()*200));
+        draw();
+    }
+
+    function mycut() {
+        dataset.pop();
+        draw();
+    }
+</script>
+
+<button type="button" onclick="mysort()">排序</button>
+<button type="button" onclick="myadd()">增加数据</button>
+<button type="button" onclick="mycut()">减少数据</button>
+</body>
+</html>
