@@ -1,21 +1,71 @@
 <!DOCTYPE html>
-<svg width="960" height="673" stroke="#fff" stroke-width="0.5"></svg>
+<svg id="contour" width="960" height="673" stroke="#fff" stroke-width="0.5"></svg>
+<svg id="legend" width="100" height="673" style="border: 1px solid silver;margin-left: 20px"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-hsv.v0.1.min.js"></script>
 <script src="https://d3js.org/d3-contour.v1.min.js"></script>
 <script>
 
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var svg = d3.select("#contour");
+var width = svg.attr("width");
+var height = svg.attr("height");
+
+var legend = d3.select("#legend"),
+    lwidth = legend.attr("width"),
+    lheight = legend.attr("height");
+
+function legendPlot(svg, uplimit, dnlimit, space) {
+    var width = svg.attr('width');
+    var height = svg.attr('height');
+
+    var ldata = d3.range(uplimit, dnlimit, space);
+    var lheight =height/ldata.length;
+    console.log(height, ldata);
+    var update = svg.selectAll('rect').data(ldata);
+
+    var enter = update.enter();
+
+    var exit = update.exit();
+    
+    
+
+    update.attr('x', 0)
+        .attr('y', function (d,i) {
+            return i*lheight;
+        })
+        .attr('width', width)
+        .attr('height', height)
+        .style('fill',function (d) {
+            return color(d)
+        });
+
+    enter.append('rect')
+        .attr('x', 0)
+        .attr('y', function (d,i) {
+            return i*lheight;
+        })
+        .attr('width', width)
+        .attr('height', height)
+        .style('fill',function (d) {
+            return color(d)
+        });
+
+    exit.remove();
+
+}
 
 var i0 = d3.interpolateHsvLong(d3.hsv(120, 1, 0.65), d3.hsv(60, 1, 0.90)),
-    i1 = d3.interpolateHsvLong(d3.hsv(60, 1, 0.90), d3.hsv(0, 0, 0.95)),
+    i1 = d3.interpolateHsvLong(d3.hsv(60, 1, 0.90), d3.hsv(0, 1, 0.95)),
     interpolateTerrain = function(t) { return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2); },
-    color = d3.scaleSequential(interpolateTerrain).domain([90, 190]);
+    color = d3.scaleSequential(interpolateTerrain).domain([90, 195]);
 
 d3.json("volcano.json", function(error, volcano) {
   if (error) throw error;
+
+  var min = Math.min.apply(null, volcano.values);
+  var max = Math.max.apply(null, volcano.values);
+
+  legendPlot(legend, max, min, -5);
 
   svg.selectAll("path")
     .data(d3.contours()
