@@ -7,7 +7,7 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-hsv.v0.1.min.js"></script>
     <script src="https://d3js.org/d3-contour.v1.min.js"></script>
-
+    <script src="jquery.js"></script>
     <link rel="stylesheet" type="text/css" href="mystyle.css">
 
 
@@ -19,7 +19,7 @@
         var tooltip = d3.select('body')
             .append('div')
             .attr('class','tooltipss')
-            .attr('opacity',0.0)
+            .attr('opacity',0.0);
 
 //        tooltip.html('this is a tooltip')
 
@@ -48,6 +48,7 @@
               .attr("d", d3.geoPath(d3.geoIdentity().scale(width / volcano.width)))
               .attr("fill", function(d) { return color(d.value); })
               .on('mouseover',function (d) {
+                  $(this).attr('fill', 'yellow');
                   tooltip.html(
                       'X轴坐标：'+d3.event.pageX+'<br />'+
                       'Y轴坐标：'+(678-d3.event.pageY)+'<br />'+
@@ -58,6 +59,7 @@
                       .style('opacity',1.0)
               })
               .on('mouseout',function (d) {
+                  $(this).attr('fill', color(d.value));
                   tooltip.style('opacity',0.0)
               });
         });
